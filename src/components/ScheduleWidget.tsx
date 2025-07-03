@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const ScheduleWidget = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -15,12 +14,13 @@ const ScheduleWidget = () => {
         existingScript.remove();
       }
 
+      // Create the script element
       const script = document.createElement('script');
       script.src = 'https://momence.com/plugin/host-schedule/host-schedule.js';
       script.type = 'module';
       script.async = true;
       
-      // Set the Momence configuration attributes
+      // Set all the required attributes for Momence configuration
       script.setAttribute('host_id', '13752');
       script.setAttribute('locale', 'en');
       script.setAttribute('location_ids', '[]');
@@ -34,7 +34,8 @@ const ScheduleWidget = () => {
 
       script.onload = () => {
         console.log('Momence script loaded successfully');
-        setTimeout(() => setIsLoading(false), 1000);
+        // Give the widget time to initialize
+        setTimeout(() => setIsLoading(false), 2000);
       };
 
       script.onerror = () => {
@@ -42,9 +43,8 @@ const ScheduleWidget = () => {
         setIsLoading(false);
       };
 
-      if (containerRef.current) {
-        containerRef.current.appendChild(script);
-      }
+      // Append to document body instead of a specific container
+      document.body.appendChild(script);
     };
 
     loadMomenceScript();
@@ -61,7 +61,7 @@ const ScheduleWidget = () => {
   if (isLoading) {
     return (
       <Card className="momence-schedule-container">
-        <div className="space-y-4">
+        <div className="space-y-4 p-6">
           <Skeleton className="h-8 w-64" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -76,7 +76,6 @@ const ScheduleWidget = () => {
 
   return (
     <div 
-      ref={containerRef} 
       className="momence-schedule-container animate-fade-in"
       id="momence-schedule-widget"
     />
